@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DecisionSnap makes AI-assisted decisions transparent by separating AI scoring from human-controlled priorities.">
+  <title>DecisionSnap</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="brand"><span class="brand-mark">D</span>DecisionSnap</div>
+      <p class="eyebrow">Transparent AI-assisted decisions</p>
+      <h1>See why an option wins.<br><span>Then change what matters.</span></h1>
+      <p class="lede">AI can structure the decision. You control the priorities. The final ranking is calculated from numbers you can see.</p>
+    </header>
+
+    <section class="panel analyse-panel">
+      <div class="section-heading analyse-heading">
+        <div>
+          <span class="section-kicker">Try your own decision</span>
+          <h2>Give AI the question — not the final say</h2>
+        </div>
+        <div class="ai-heading-badges"><span class="ai-pill">AI → criteria + scores</span><span id="ai-config-status" class="ai-config-pill checking">checking AI…</span></div>
+      </div>
+      <form id="analyse-form" class="analyse-form" novalidate>
+        <label class="field field-wide">
+          <span>Your decision</span>
+          <input id="decision-input" name="decision" type="text" maxlength="240" placeholder="What should 'best' mean for this choice?" autocomplete="off">
+        </label>
+
+        <div class="composer-grid">
+          <section class="composer-card" aria-labelledby="criteria-builder-title">
+            <div class="composer-heading">
+              <div>
+                <span id="criteria-builder-title" class="composer-title">Criteria</span>
+                <small>What “better” means. Leave the list empty and AI will suggest them.</small>
+              </div>
+            </div>
+            <div id="criteria-inputs" class="composer-list" aria-live="polite"></div>
+            <div class="composer-add-row">
+              <select id="criterion-picker" aria-label="Choose a criterion to add"></select>
+              <button id="add-form-criterion" class="mini-add" type="button">+ Add</button>
+            </div>
+            <button id="add-custom-criterion" class="custom-add-link" type="button">+ Add a different criterion</button>
+          </section>
+
+          <section class="composer-card" aria-labelledby="options-builder-title">
+            <div class="composer-heading">
+              <div>
+                <span id="options-builder-title" class="composer-title">Options</span>
+                <small>The alternatives AI should compare.</small>
+              </div>
+            </div>
+            <div id="options-inputs" class="composer-list" aria-live="polite"></div>
+            <div class="composer-add-row">
+              <select id="option-picker" aria-label="Choose an option to add"></select>
+              <button id="add-form-option" class="mini-add" type="button">+ Add</button>
+            </div>
+            <button id="add-custom-option" class="custom-add-link" type="button">+ Add a different option</button>
+          </section>
+        </div>
+
+        <div class="analyse-actions">
+          <button id="analyse-button" class="primary-button compact" type="submit">Analyse with AI</button>
+          <button id="use-demo" class="ghost-button" type="button">Reset to laptop demo</button>
+          <div id="analyse-status" class="analyse-status" role="status" aria-live="polite"></div>
+        </div>
+      </form>
+    </section>
+
+    <section class="decision-card">
+      <div>
+        <span id="source-label" class="section-kicker">Demo decision</span>
+        <h2 id="decision">Which laptop gives me the best balance of price, performance, battery life, portability and display quality?</h2>
+      </div>
+      <button id="reset-demo" class="ghost-button" type="button">Reset demo</button>
+    </section>
+
+    <div class="workspace">
+      <section class="panel priorities-panel">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">Your priorities</span>
+            <h2>What matters most?</h2>
+          </div>
+          <div class="total-pill">Total <strong id="total-weight">100%</strong></div>
+        </div>
+        <p class="helper">Move one slider. The others rebalance automatically so your priorities always total 100%.</p>
+        <div id="weights" class="weights"></div>
+        <button id="price-nudge" class="primary-button" type="button">Make price the priority → 60%</button>
+      </section>
+
+      <section id="winner-card" class="panel results-panel">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">Live ranking</span>
+            <h2>Your best fit right now</h2>
+          </div>
+          <span class="live-dot"><i></i> recalculates live</span>
+        </div>
+        <div id="ranking" class="ranking"></div>
+        <div class="explanation-box">
+          <span>Why?</span>
+          <p id="explanation"></p>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel breakdown-panel">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">Transparent breakdown</span>
+          <h2>Every score behind the ranking</h2>
+        </div>
+        <span class="formula">score × weight = contribution</span>
+      </div>
+      <div id="breakdown" class="breakdown"></div>
+    </section>
+
+    <footer>
+      <strong>AI structures the decision.</strong> Deterministic logic evaluates it. You remain in control.
+    </footer>
+  </main>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
