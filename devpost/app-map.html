@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DecisionSnap — App Map</title>
+  <style>
+    :root{color-scheme:light;--bg:#f6f7fb;--card:#fff;--ink:#111827;--muted:#667085;--line:#dfe3ee;--accent:#5b5cf0;--soft:#f0f0ff}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    main{max-width:980px;margin:0 auto;padding:40px 20px 64px} h1{font-size:2.2rem;line-height:1.05;margin:0 0 8px} h2{margin-top:34px;font-size:1.25rem} h3{margin-bottom:6px}
+    p{max-width:78ch}.muted{color:var(--muted)} .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 10px 30px rgba(20,25,45,.05)}
+    code{background:#f2f4f8;border:1px solid #e5e7eb;border-radius:6px;padding:2px 6px;font-size:.92em} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+    .pill{display:inline-block;background:var(--soft);color:#4142c5;border:1px solid #d9d9ff;padding:4px 9px;border-radius:999px;font-size:.82rem;font-weight:700}
+    ol{padding-left:22px} li+li{margin-top:10px} a{color:#3536c8} .diagram{width:100%;height:auto;display:block;margin-top:10px}
+    .node{fill:#fff;stroke:#cfd5e3;stroke-width:2}.node-accent{fill:#f0f0ff;stroke:#8b8cf7;stroke-width:2}.label{font:600 14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;fill:#111827}.small{font:12px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;fill:#667085}.arrow{stroke:#8b8cf7;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+    details{border-top:1px solid var(--line);padding:12px 0} summary{cursor:pointer;font-weight:700}
+    footer{margin-top:40px;color:var(--muted);font-size:.9rem}
+  </style>
+</head>
+<body>
+<main>
+  <span class="pill">DecisionSnap build reference</span>
+  <h1>App Map</h1>
+  <p class="muted">A compact guide to how the finished proof of concept works, where the important logic lives, and where to start when changing it later.</p>
+
+  <section class="card">
+    <h2 style="margin-top:0">What the app does</h2>
+    <p>DecisionSnap turns a comparison into visible criteria, option scores, human-controlled weights, and a deterministic ranking. Gemini may structure the criteria and scores, but it does <strong>not</strong> choose the winner. The browser calculates the final ranking from the numbers shown on screen.</p>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">One real action through the system</h2>
+    <svg class="diagram" viewBox="0 0 900 250" role="img" aria-labelledby="diagram-title diagram-desc">
+      <title id="diagram-title">Analyse with AI data flow</title>
+      <desc id="diagram-desc">The browser sends the decision, criteria and options to the local Node server. The server asks Gemini for structured criteria and scores. The browser then calculates and displays the ranking locally.</desc>
+      <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#8b8cf7"/></marker></defs>
+      <rect class="node-accent" x="20" y="70" rx="14" ry="14" width="210" height="100"/>
+      <text class="label" x="40" y="105">1. Browser UI</text><text class="small" x="40" y="132">public/js/app.js</text><text class="small" x="40" y="151">analyseWithAI()</text>
+      <path class="arrow" d="M235 120 H345"/>
+      <rect class="node" x="350" y="50" rx="14" ry="14" width="210" height="140"/>
+      <text class="label" x="370" y="88">2. Local Node server</text><text class="small" x="370" y="115">server.js → handleAnalyse()</text><text class="small" x="370" y="138">src/ai.js</text><text class="small" x="370" y="157">buildGeminiRequest()</text>
+      <path class="arrow" d="M565 120 H675"/>
+      <rect class="node" x="680" y="70" rx="14" ry="14" width="200" height="100"/>
+      <text class="label" x="700" y="105">3. Gemini</text><text class="small" x="700" y="132">criteria + 0–100 scores</text><text class="small" x="700" y="151">structured JSON only</text>
+      <path class="arrow" d="M680 190 C580 235,310 235,210 175"/>
+      <text class="small" x="360" y="228">structured data returns → browser calculates ranking</text>
+    </svg>
+    <p><strong>Visible result:</strong> <code>public/js/scoring.js → calculateRanking()</code> applies the weights locally, while <code>rebalanceWeights()</code> keeps the total at 100%. The winner, explanation and transparent breakdown are then rendered on the same page.</p>
+  </section>
+
+  <section>
+    <h2>Reference route: 3 useful stops</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>1. User interaction</h3>
+        <p><code>public/js/app.js</code></p>
+        <p>Search for <code>analyseWithAI</code>, <code>renderComposer</code>, and <code>render</code>. This is where criteria/options are collected, AI analysis is requested, and the visible page is updated.</p>
+      </article>
+      <article class="card">
+        <h3>2. AI contract</h3>
+        <p><code>src/ai.js</code></p>
+        <p>Search for <code>buildGeminiRequest</code> and <code>analyseDecision</code>. The prompt limits the AI to criteria and scores, requires structured JSON, and explicitly forbids choosing the winner.</p>
+      </article>
+      <article class="card">
+        <h3>3. Deterministic decision logic</h3>
+        <p><code>public/js/scoring.js</code></p>
+        <p>Search for <code>rebalanceWeights</code> and <code>calculateRanking</code>. This is the human-controlled, inspectable maths behind the final order.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">To change this, start here</h2>
+    <ul>
+      <li><strong>Change demo values or the demo question:</strong> <code>public/js/demo-data.js</code>.</li>
+      <li><strong>Change how weights behave or ranking is calculated:</strong> <code>public/js/scoring.js</code>.</li>
+      <li><strong>Change the Gemini instructions or schema:</strong> <code>src/ai.js → buildGeminiRequest()</code>.</li>
+      <li><strong>Change criteria/options composer behaviour:</strong> <code>public/js/app.js → renderComposer()</code> and related composer helpers.</li>
+      <li><strong>Change layout or visual treatment:</strong> <code>public/index.html</code> and <code>public/styles.css</code>.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">A practice to reuse</h2>
+    <p>The useful AI pattern in this project is <strong>prompt as contract, not prompt as authority</strong>. Instead of asking Gemini “Which laptop is best?”, DecisionSnap gives it a narrow role, exact inputs, a 0–100 desirability convention, a strict JSON shape, and a prohibition on ranking or weighting. The tests in <code>test/ai.test.js</code> then verify that the structured output can be safely consumed.</p>
+    <p>This same pattern can be reused in other projects: let AI handle an ambiguous language task, constrain its output into a machine-checkable shape, validate it, and keep any critical calculation or policy decision in deterministic code when practical.</p>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-top:0">Run it again</h2>
+    <ol>
+      <li>From the project folder, run <code>npm start</code>.</li>
+      <li>Open <code>http://localhost:3000</code>.</li>
+      <li>For live AI, configure <code>GEMINI_API_KEY</code> using <code>1_SETUP_GEMINI_KEY.bat</code> on Windows.</li>
+      <li>Run <code>npm test</code> to execute the project checks.</li>
+    </ol>
+    <p class="muted">Map source snapshot: commit <code>38fdb3d</code> (“Make removed choices safely re-selectable”). This map is a snapshot and may drift if the code changes later.</p>
+  </section>
+
+  <details>
+    <summary>Why the architecture stayed small</summary>
+    <p>The proof of concept uses Node built-ins and plain browser JavaScript, with no database, authentication, framework, bundler, or runtime npm dependencies. That keeps the demo path easy to run and leaves the product’s distinctive idea—the transparent decision logic—visible rather than buried under infrastructure.</p>
+  </details>
+
+  <footer>DecisionSnap — generated after final build review. No credentials or learner-profile information are included.</footer>
+</main>
+</body>
+</html>
