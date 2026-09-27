@@ -72,3 +72,7 @@ Gemini is explicitly instructed not to choose a winner or assign weights. The fi
 ## AI disclosure
 
 Gemini 3.8 Flash (with 3.7/3.6 capacity fallbacks) is used to suggest comparison criteria only when none are supplied, and to generate comparative 0–100 desirability scores. Those AI scores may be estimates when the prompt does not contain verified factual product data. The AI does not calculate the final winner. Ranking, weight redistribution, criterion removal, score breakdown, and winner explanation are deterministic local code. Renaming or adding a criterion triggers a constrained rescore because the meaning of the scoring dimensions has changed.
+
+## License
+
+Released under the MIT License. See [LICENSE](LICENSE).
