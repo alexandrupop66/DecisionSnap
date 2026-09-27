@@ -1,0 +1,16 @@
+{
+  "name": "decisionsnap",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Transparent AI-assisted decision ranking with human-controlled weights.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "setup-key": "node scripts/setup-key.mjs",
+    "doctor": "node scripts/doctor.mjs"
+  }
+}
